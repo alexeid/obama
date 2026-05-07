@@ -44,9 +44,13 @@ public class OBAMAModelTestInputEditor extends SiteModelInputEditor {
         return OBAMAModelTestSiteModel.class;
     }
     
+	public OBAMAModelTestInputEditor() {
+		super();
+	}
+
 	public OBAMAModelTestInputEditor(BeautiDoc doc) {
 		super(doc);
-		if (availableModels == null) {		
+		if (availableModels == null) {
 			availableModels = new ArrayList<>();
 			availableModels.add(new OBAMA_Blosum62());
 			availableModels.add(new OBAMA_CpREV());

@@ -9,6 +9,9 @@ public class Transition extends BEASTObject {
 	private String from;
 	private String to;
 	
+	public Transition() {
+	}
+
 	public Transition(@Param(name="from", description="source state for origin/target pair") String from,
 			@Param(name="to", description="target state for origin/target pair") String to) {
 		this.from = from;
