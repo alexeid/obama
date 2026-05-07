@@ -8,8 +8,8 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.util.InputUtil;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.tree.Node;
 
@@ -17,11 +17,11 @@ import beast.base.evolution.tree.Node;
 @Citation(value="Remco Bouckaert. OBAMA: OBAMA for Bayesian amino-acid model averaging. Peerj. 2020.", year=2020, DOI="https://doi.org/10.7717/peerj.44129")
 public class OBAMAModelTestSiteModel extends SiteModel {
 
-	public Input<IntegerParameter> hasGammaRatesInput = new Input<IntegerParameter>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
-	public Input<IntegerParameter> hasInvariantSitesInput = new Input<IntegerParameter>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
 
-	IntegerParameter hasInvariantSites;
-	IntegerParameter hasGammaRates;
+	IntScalarParam<? extends NonNegativeInt> hasInvariantSites;
+	IntScalarParam<? extends NonNegativeInt> hasGammaRates;
 	
 	@Override
 	public void initAndValidate() {
@@ -55,7 +55,7 @@ public class OBAMAModelTestSiteModel extends SiteModel {
 		double propVariable = 1.0;
         int cat = 0;
 
-        if (/*invarParameter != null && */hasInvariantSites.getValue() > 0) {
+        if (/*invarParameter != null && */hasInvariantSites.get() > 0) {
             if (hasPropInvariantCategory) {
                 categoryRates[0] = 0.0;
                 categoryProportions[0] = invarParameter.getValue();
@@ -71,7 +71,7 @@ public class OBAMAModelTestSiteModel extends SiteModel {
             }
         }
 
-        if (hasGammaRates.getValue() > 0) {
+        if (hasGammaRates.get() > 0) {
 
             final double a = shapeParameter.getValue();
             double mean = 0.0;
@@ -148,7 +148,7 @@ public class OBAMAModelTestSiteModel extends SiteModel {
 	
 	@Override
     public double getProportionInvariant() {
-        if (hasInvariantSites.getValue() > 0) {
+        if (hasInvariantSites.get() > 0) {
         	return invarParameter.getValue();
         } else {
         	return 0.0;

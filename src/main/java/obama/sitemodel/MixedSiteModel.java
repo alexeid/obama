@@ -12,24 +12,26 @@ import beast.base.evolution.sitemodel.SiteModelInterface;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.inference.CalculationNode;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.IntVectorParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 
 @Description("Mixture site model that allows different substitution models for different sites. "
 		+ "To be used in combination with MixedTreeLikelihood")
 public class MixedSiteModel extends SiteModelInterface.Base {
 
-	final public Input<IntegerParameter> siteModelIndexInput = new Input<>("siteModelIndex", 
-			"identifies substitution model for each site. " + 
+	final public Input<IntVectorParam<? extends NonNegativeInt>> siteModelIndexInput = new Input<>("siteModelIndex",
+			"identifies substitution model for each site. " +
 			"Its length should be number of sites", Validate.REQUIRED);
-	
-	final public Input<List<SubstitutionModel>> mixtureComponentInput = 
-            new Input<>("component", "pool of substitution models along branches in the beast.tree", new ArrayList<>(), Validate.REQUIRED);
-    
-	final public Input<RealParameter> muParameterInput = new Input<>("mutationRate", "mutation rate (defaults to 1.0)");
 
-    protected RealParameter muParameter;
-    protected IntegerParameter siteModelIndex;
+	final public Input<List<SubstitutionModel>> mixtureComponentInput =
+            new Input<>("component", "pool of substitution models along branches in the beast.tree", new ArrayList<>(), Validate.REQUIRED);
+
+	final public Input<RealVectorParam<? extends PositiveReal>> muParameterInput = new Input<>("mutationRate", "mutation rate (defaults to 1.0 per category)");
+
+    protected RealVectorParam<? extends PositiveReal> muParameter;
+    protected IntVectorParam<? extends NonNegativeInt> siteModelIndex;
 	private List<SubstitutionModel> mixtureComponent;
 	protected double [][] freqs; 
 	
@@ -40,27 +42,29 @@ public class MixedSiteModel extends SiteModelInterface.Base {
 	@Override
 	public void initAndValidate() {
 		siteModelIndex = siteModelIndexInput.get();
-		
+
 		mixtureComponent = initialiseMixtureComponents();
-	
+
 		muParameter = muParameterInput.get();
 		if (muParameter == null) {
-			muParameter = new RealParameter("1.0");
-		} 
-		if (muParameter.getDimension() != mixtureComponent.size()) {
-			muParameter.setDimension(mixtureComponent.size());			
+			double[] ones = new double[mixtureComponent.size()];
+			java.util.Arrays.fill(ones, 1.0);
+			muParameter = new RealVectorParam<>(ones, PositiveReal.INSTANCE);
+		}
+		if (muParameter.size() != mixtureComponent.size()) {
+			muParameter.setDimension(mixtureComponent.size());
 		}
 	}
 
 	public void getSiteModelIndex(int [] matrixIndex) {
-		int n = siteModelIndex.getDimension();
+		int n = siteModelIndex.size();
 		if (n != matrixIndex.length) {
 			siteModelIndex.setDimension(matrixIndex.length);
 			Log.warning("Expected site model index of length " + matrixIndex.length + " instead of " + n);
 			Log.warning("Setting dimension to " + n);
 		}
 		for (int i = 0; i < n; i++) {
-			matrixIndex[i] = siteModelIndex.getValue(i);
+			matrixIndex[i] = siteModelIndex.get(i);
 		}
 	}
 	
@@ -70,7 +74,7 @@ public class MixedSiteModel extends SiteModelInterface.Base {
 
 	public void getTransitionProbabilities(Node node, double startTime, double endTime, int category, double rate,
 			double[] matrix) {
-    	final double jointBranchRate = /* getRateForCategory(category, node) */ rate * muParameter.getValue(category);
+    	final double jointBranchRate = /* getRateForCategory(category, node) */ rate * muParameter.get(category);
 		mixtureComponent.get(category).getTransitionProbabilities(node, startTime, endTime, jointBranchRate, matrix);
 	}
 
@@ -92,7 +96,7 @@ public class MixedSiteModel extends SiteModelInterface.Base {
 
 	@Override
 	public int getCategoryOfSite(int site, Node node) {
-		return siteModelIndex.getValue(site);
+		return siteModelIndex.get(site);
 	}
 
 	@Override

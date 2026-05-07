@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace=":beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="" version="2.4">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain::beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="" version="2.4">
 
 
     <data
@@ -45,12 +45,12 @@ name="alignment">
             </taxonset>
         </tree>
         <parameter id="birthRate.t:protein" name="stateNode">1.0</parameter>
-        <stateNode id="OBAMA_ModelIndicator.s:protein" spec="parameter.IntegerParameter" lower="0" upper="14">0</stateNode>
+        <stateNode id="OBAMA_ModelIndicator.s:protein" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
         <parameter id="OBAMA_gammaShape.s:protein" name="stateNode">1.0</parameter>
         <parameter id="OBAMA_ProportionInvariable.s:protein" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="OBAMA_hasInvariableSites.s:protein" spec="parameter.IntegerParameter">1</stateNode>
-        <stateNode id="OBAMA_hasGammaRates.s:protein" spec="parameter.IntegerParameter">1</stateNode>
-        <stateNode id="OBAMA_useExternalFreqs.s:protein" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="OBAMA_hasInvariableSites.s:protein" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
+        <stateNode id="OBAMA_hasGammaRates.s:protein" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
+        <stateNode id="OBAMA_useExternalFreqs.s:protein" spec="BoolScalarParam">false</stateNode>
     </state>
 
     <init id="RandomTree.t:protein" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:protein" taxa="@protein">
@@ -131,7 +131,7 @@ name="alignment">
 
     <operator id="OBAMA_hasInvariableSitesFlipper.s:protein" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@OBAMA_hasInvariableSites.s:protein" rates="@OBAMA_ProportionInvariable.s:protein" weight="0.1"/>
 
-    <operator id="OBAMA_FreqsFlipOperator.s:protein" spec="BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:protein" weight="0.1"/>
+    <operator id="OBAMA_FreqsFlipOperator.s:protein" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:protein" weight="0.1"/>
 
     <operator id="OBAMA_ModelIndicatorUniformOperator.s:protein" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:protein" weight="3.0"/>
 

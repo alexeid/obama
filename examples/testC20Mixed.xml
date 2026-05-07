@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace=":beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="" version="2.4">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain::beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="" version="2.4">
 
 
     <data
@@ -45,7 +45,7 @@ name="alignment">
             </taxonset>
         </tree>
         <parameter id="birthRate.t:protein" name="stateNode">1.0</parameter>
-        <stateNode id="siteModelIndex.s:protein" spec="parameter.IntegerParameter" dimension="234">0.0</stateNode>
+        <stateNode id="siteModelIndex.s:protein" spec="IntVectorParam" domain="NonNegativeInt" dimension="234">0</stateNode>
         <parameter id="mutationRate.s:protein" name="stateNode" lower="0.0">1.0</parameter>
     </state>
 

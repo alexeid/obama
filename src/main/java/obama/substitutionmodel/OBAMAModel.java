@@ -9,9 +9,9 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.BooleanParameter;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.core.Log;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.BoolScalarParam;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.tree.Node;
@@ -24,13 +24,13 @@ import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 @Citation(value="Remco Bouckaert. OBAMA: OBAMA for Bayesian amino-acid model averaging. PeerJ 8, e9460",
 		year = 2020, firstAuthorSurname = "bouckaert", DOI="doi.org/10.7717/peerj.9460")
 public class OBAMAModel extends GeneralSubstitutionModel {
-	final public Input<BooleanParameter> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
-			+ "otherwise use frequencies from frequencies input (e.g. empirical frequencies)", new BooleanParameter("false"));
+	final public Input<BoolScalarParam> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
+			+ "otherwise use frequencies from frequencies input (e.g. empirical frequencies)", new BoolScalarParam(false));
 	final public Input<List<EmpiricalSubstitutionModel>> substModelInput = new Input<>("model", "empicial amino acid substitution model", new ArrayList<>(), Validate.REQUIRED);
-	final public Input<IntegerParameter> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
+	final public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
 
-	BooleanParameter useExternalFreqs;
-	IntegerParameter modelIndicator;
+	BoolScalarParam useExternalFreqs;
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	List<EmpiricalSubstitutionModel> models;
 	
 	public OBAMAModel() {
@@ -44,13 +44,12 @@ public class OBAMAModel extends GeneralSubstitutionModel {
 		useExternalFreqs = useExternalFreqsInput.get();
 		models = substModelInput.get();
 		modelIndicator = modelIndicatorInput.get();
-		if (modelIndicator.getUpper() > models.size() - 1) {
-			Log.warning("Setting upper limit of " + modelIndicator.getID() + " to " + (models.size()-1) +".");
-			modelIndicator.setUpper(models.size() - 1);
-		}
-		if (modelIndicator.getLower() < 0) {
-			Log.warning("Setting lower limit of " + modelIndicator.getID() + " to 0.");
-			modelIndicator.setLower(0);
+		// Range is enforced by the NonNegativeInt domain; an upper bound is no
+		// longer expressible on IntScalarParam (the spec parameters use domains
+		// rather than per-instance lower/upper). Just sanity-check the value.
+		if (modelIndicator.get() > models.size() - 1 || modelIndicator.get() < 0) {
+			throw new IllegalArgumentException("modelIndicator value " + modelIndicator.get() +
+					" is out of range [0, " + (models.size() - 1) + "]");
 		}
 		
 		
@@ -74,24 +73,24 @@ public class OBAMAModel extends GeneralSubstitutionModel {
 	
 	@Override
 	public void setupRelativeRates() {
-    	EmpiricalSubstitutionModel model = models.get(modelIndicator.getValue());
+    	EmpiricalSubstitutionModel model = models.get(modelIndicator.get());
     	double [] empiricalRates = model.getEmpericalRateValues();
         System.arraycopy(empiricalRates, 0, relativeRates, 0, empiricalRates.length);
     }
 
 	@Override
 	public double[] getFrequencies() {
-		if (useExternalFreqs.getValue()) {
+		if (useExternalFreqs.get()) {
 			return super.getFrequencies();
 		}
-    	EmpiricalSubstitutionModel model = models.get(modelIndicator.getValue());
+    	EmpiricalSubstitutionModel model = models.get(modelIndicator.get());
         return model.getFrequencies();
 	}
 	
 	
     @Override
     public double[] getRateMatrix(Node node) {
-    	EmpiricalSubstitutionModel model = models.get(modelIndicator.getValue());
+    	EmpiricalSubstitutionModel model = models.get(modelIndicator.get());
         double[][] matrix = model.getEmpiricalRates();
         int states = matrix.length;
         double[] rates = new double[states * states];

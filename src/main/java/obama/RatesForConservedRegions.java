@@ -8,18 +8,19 @@ import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.core.Loggable;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 
 @Description("HMM rate matrix for Example 2 in Siepel, A. and Haussler, D., 2005. Phylogenetic hidden Markov models. In Statistical methods in molecular evolution (pp. 325-351). Springer New York.")
 public class RatesForConservedRegions extends CalculationNode implements Function, Loggable {
-	public Input<RealParameter> lambdaInput = new Input<>("lambda","auto correlation parameter lambda", Validate.REQUIRED);
+	public Input<RealScalarParam<? extends UnitInterval>> lambdaInput = new Input<>("lambda","auto correlation parameter lambda", Validate.REQUIRED);
 	public Input<Integer> states = new Input<>("stateCount", "number of states k. Rates between states are (1.0-lambda)/k and rates to stay in states are lambda + (1.0-lambda)/k", 3);
 
 	double [] rates;
 	int k;
-	RealParameter lambda;
+	RealScalarParam<? extends UnitInterval> lambda;
 	boolean needsUpdate = true;
-	
+
 	@Override
 	public void initAndValidate() {
 		k = states.get();
@@ -29,9 +30,9 @@ public class RatesForConservedRegions extends CalculationNode implements Functio
 	}
 
 	private void update() {
-		double b = (1.0 - lambda.getValue()) / k;
-//		double a = lambda.getValue() + (k-1) * (1.0 - lambda.getValue()) / k;
-		double a = lambda.getValue() + (1.0 - lambda.getValue()) / k;
+		double b = (1.0 - lambda.get()) / k;
+//		double a = lambda.get() + (k-1) * (1.0 - lambda.get()) / k;
+		double a = lambda.get() + (1.0 - lambda.get()) / k;
 
 		int u = 0;
 		for (int i = 0; i < k; i++) {

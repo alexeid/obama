@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
     
 
     <mergewith point='aux-sitemodel-panels'>
@@ -21,15 +21,15 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 			>
             <![CDATA[
 
-        <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="14">0</stateNode>
+        <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
         <parameter id="OBAMA_gammaShape.s:$(n)" lower="0.1" name="stateNode">1.0</parameter>
         <parameter id="OBAMA_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
-        <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>  
+        <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
+        <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>  
         <parameter id="OBAMA_frequencies.s:$(n)" lower="0.0" upper="1.0" name="stateNode" dimension="20">0.05</parameter>
 
         <!-- frequencies estimation -->
-        <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
 
 
         <distribution id="OBAMA_GammaShapePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@OBAMA_hasGammaRates.s:$(n)" x="@OBAMA_gammaShape.s:$(n)">
@@ -87,7 +87,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <operator id='OBAMA_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.1" weight="0.1" parameter="@OBAMA_mutationRate.s:$(n)"/>
             
 	    <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
-    	<operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
+    	<operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
 
 
         <log id="OBAMA_ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
@@ -172,15 +172,15 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             >
             <![CDATA[
 
-        <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="14">0</stateNode>
+        <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
         <parameter id="OBAMA_gammaShape.s:$(n)" lower="0.1" name="stateNode">1.0</parameter>
         <parameter id="OBAMA_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
-        <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>  
+        <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
+        <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>  
         <parameter id="frequencies_OBAMA.s:$(n)" lower="0.0" upper="1.0" name="stateNode" dimension="20">0.05</parameter>
 
         <!-- frequencies estimation -->
-        <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
 
 
         <distribution id="OBAMA_GammaShapePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@OBAMA_hasGammaRates.s:$(n)" x="@OBAMA_gammaShape.s:$(n)">
@@ -238,7 +238,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <operator id='OBAMA_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.1" weight="0.05" parameter="@OBAMA_mutationRate.s:$(n)"/>
             
         <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
-        <operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
+        <operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
 
 
         <log id="OBAMA_ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>

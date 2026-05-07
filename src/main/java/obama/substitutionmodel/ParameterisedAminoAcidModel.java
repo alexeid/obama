@@ -9,6 +9,8 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.Frequencies;
@@ -22,9 +24,9 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
 			+ "codon position 2", Validate.REQUIRED);
 	final public Input<GeneralSubstitutionModel> substModel3Input = new Input<>("model3", "nucleotide substitution model for "
 			+ "codon position 3", Validate.REQUIRED);
-	final public Input<RealParameter> substRate1Input = new Input<>("rate1", "substitution rate for codon position 1", new RealParameter("1.0"));
-	final public Input<RealParameter> substRate2Input = new Input<>("rate2", "substitution rate for codon position 2", new RealParameter("1.0"));
-	final public Input<RealParameter> substRate3Input = new Input<>("rate3", "substitution rate for codon position 3", new RealParameter("1.0"));
+	final public Input<RealScalarParam<? extends PositiveReal>> substRate1Input = new Input<>("rate1", "substitution rate for codon position 1", new RealScalarParam<>(1.0, PositiveReal.INSTANCE));
+	final public Input<RealScalarParam<? extends PositiveReal>> substRate2Input = new Input<>("rate2", "substitution rate for codon position 2", new RealScalarParam<>(1.0, PositiveReal.INSTANCE));
+	final public Input<RealScalarParam<? extends PositiveReal>> substRate3Input = new Input<>("rate3", "substitution rate for codon position 3", new RealScalarParam<>(1.0, PositiveReal.INSTANCE));
 	
     public ParameterisedAminoAcidModel() {
         frequenciesInput.setRule(Validate.OPTIONAL);
@@ -32,7 +34,7 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
     }
 
 
-    RealParameter substRate1, substRate2, substRate3;
+    RealScalarParam<? extends PositiveReal> substRate1, substRate2, substRate3;
     GeneralSubstitutionModel model1, model2, model3;
     List<int []> ratemap1;
     List<int []> ratemap2;
@@ -180,9 +182,9 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
 		double [][] rates1 = model1.getRateMatrix();
 		double [][] rates2 = model2.getRateMatrix();
 		double [][] rates3 = model3.getRateMatrix();
-		double rate1 = substRate1.getValue();
-		double rate2 = substRate2.getValue();
-		double rate3 = substRate3.getValue();
+		double rate1 = substRate1.get();
+		double rate2 = substRate2.get();
+		double rate3 = substRate3.get();
     	
     	char aa1, aa2;
 		int cs1, cs2, s1, s2;
@@ -231,7 +233,7 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
     	}
     }
     
-    private void processRates(GeneralSubstitutionModel model1, List<int[]> ratemap1, RealParameter substRate1) {
+    private void processRates(GeneralSubstitutionModel model1, List<int[]> ratemap1, RealScalarParam<? extends PositiveReal> substRate1) {
     	//if (model1.updateMatrix) {
     		model1.setupRelativeRates();
     		model1.setupRateMatrix();
@@ -239,7 +241,7 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
     	//}
     	double [][] rates1 = model1.getRateMatrix();
     	double [] relrates1 = model1.getRelativeRates();
-    	double substRate = substRate1.getValue();
+    	double substRate = substRate1.get();
         for (int [] i : ratemap1) {
         	int i1 = i[1];
         	int i2 = i[2];

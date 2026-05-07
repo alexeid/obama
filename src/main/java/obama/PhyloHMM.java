@@ -18,8 +18,9 @@ import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.State;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntVectorParam;
 import beast.base.core.Log;
 import beast.base.core.ProgramStatus;
 import beast.base.evolution.alignment.Alignment;
@@ -39,8 +40,8 @@ public class PhyloHMM extends Distribution {
 			+ "", hmmAlgorithm.Viterbi, hmmAlgorithm.values());
 	
 	final public Input<String> stateLabelsInput = new Input<>("stateLabels", "comma separated list of labels for each of the states in the HMM");
-	final public Input<IntegerParameter> stateToOutputMapInput = new Input<>("stateToOutputMap", "map that links HMM states with an output. "
-			+ "If not specified, each state is assumed to have a unique output."); 
+	final public Input<IntVectorParam<? extends NonNegativeInt>> stateToOutputMapInput = new Input<>("stateToOutputMap", "map that links HMM states with an output. "
+			+ "If not specified, each state is assumed to have a unique output.");
 	
 	// threading
     final public Input<Boolean> useThreadsInput = new Input<>("useThreads", "calculated the distributions in parallel using threads (default true)", true);
@@ -74,7 +75,7 @@ public class PhyloHMM extends Distribution {
     int nrOfThreads;
     ExecutorService exec;
     
-    IntegerParameter stateToOutputMap;
+    IntVectorParam<? extends NonNegativeInt> stateToOutputMap;
     int [] map;
 
 	@Override
@@ -90,10 +91,10 @@ public class PhyloHMM extends Distribution {
 			}
 		} else {
 			stateToOutputMap = stateToOutputMapInput.get();
-			HMMStateCount = stateToOutputMap.getDimension();
+			HMMStateCount = stateToOutputMap.size();
 			Set<Integer> outputs = new LinkedHashSet<>();
-			for (Integer i : stateToOutputMap.getValues()) {
-				outputs.add(i);
+			for (int i = 0; i < HMMStateCount; i++) {
+				outputs.add(stateToOutputMap.get(i));
 			}
 			HMMOutputCount = outputs.size();
 			// make sure outputmap contains numbers 0,...,HMMOutputCount-1 (only)
@@ -104,7 +105,7 @@ public class PhyloHMM extends Distribution {
 			}
 			map = new int [HMMStateCount];
 			for (int i = 0; i < HMMStateCount; i++) {
-				map[i] = stateToOutputMap.getValue(i);
+				map[i] = stateToOutputMap.get(i);
 			}
 		}
 		
@@ -487,7 +488,7 @@ public class PhyloHMM extends Distribution {
 		if (stateToOutputMap != null && stateToOutputMap.somethingIsDirty()) {
 			// assume number of states does not change!
 			for (int i = 0; i < HMMStateCount; i++) {
-				map[i] = stateToOutputMap.getValue(i);
+				map[i] = stateToOutputMap.get(i);
 			}
 		}
 		return super.requiresRecalculation();

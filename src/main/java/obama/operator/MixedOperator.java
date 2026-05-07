@@ -12,19 +12,20 @@ import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Tree;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntVectorParam;
 import beast.base.util.Randomizer;
 import obama.likelihood.MixedTreeLikelihood;
 import obama.sitemodel.MixedSiteModel;
 
 @Description("Gibbs operator that proposes new assignment of mixture index")
 public class MixedOperator extends Operator {
-	final public Input<IntegerParameter> indexInput = new Input<>("index", "index that identifies for each site (or pattern) the component that is used as substitution model", Validate.REQUIRED);
+	final public Input<IntVectorParam<? extends NonNegativeInt>> indexInput = new Input<>("index", "index that identifies for each site (or pattern) the component that is used as substitution model", Validate.REQUIRED);
 	final public Input<MixedTreeLikelihood> likelihoodInput = new Input<>("likelihood", "mixed tree likelihood used for calculating site likelihoods for each site (or pattern)");
 	final public Input<MixedSiteModel> siteModelInput = new Input<>("siteModel", "site model containing mixture components to choose from");
 
-	private IntegerParameter index;
+	private IntVectorParam<? extends NonNegativeInt> index;
 	private MyTreeLikelihood treelikelihood;
 	private MyBeagleTreeLikelihood beagleTreeLikelihood;
 	private List<SubstitutionModel> components;
@@ -112,7 +113,7 @@ public class MixedOperator extends Operator {
 		
 		for (int i = 0; i < siteLogProbs[0].length; i++) {
 			int s = sampleIndex(i);
-			index.setValue(i, s);
+			index.set(i, s);
 		}		
 		
 		return Double.POSITIVE_INFINITY;
