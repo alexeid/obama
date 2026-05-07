@@ -9,16 +9,16 @@ import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.core.Loggable;
 import beast.base.spec.domain.UnitInterval;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 
 @Description("HMM rate matrix for Example 2 in Siepel, A. and Haussler, D., 2005. Phylogenetic hidden Markov models. In Statistical methods in molecular evolution (pp. 325-351). Springer New York.")
 public class RatesForConservedRegions extends CalculationNode implements Function, Loggable {
-	public Input<RealScalarParam<? extends UnitInterval>> lambdaInput = new Input<>("lambda","auto correlation parameter lambda", Validate.REQUIRED);
+	public Input<RealScalar<? extends UnitInterval>> lambdaInput = new Input<>("lambda","auto correlation parameter lambda", Validate.REQUIRED);
 	public Input<Integer> states = new Input<>("stateCount", "number of states k. Rates between states are (1.0-lambda)/k and rates to stay in states are lambda + (1.0-lambda)/k", 3);
 
 	double [] rates;
 	int k;
-	RealScalarParam<? extends UnitInterval> lambda;
+	RealScalar<? extends UnitInterval> lambda;
 	boolean needsUpdate = true;
 
 	@Override

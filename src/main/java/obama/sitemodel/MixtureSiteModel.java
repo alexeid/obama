@@ -17,21 +17,23 @@ import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.type.RealVector;
 import obama.likelihood.MixtureTreeLikelihood;
 
 @Description("Site model that is a mixture of various substitution models")
 public class MixtureSiteModel extends SiteModelInterface.Base {
-	final public Input<RealVectorParam<? extends NonNegativeReal>> weightVectorInput = new Input<>("weights", "mixture weights that determine contribution of each mixture component. "
+	final public Input<RealVector<? extends NonNegativeReal>> weightVectorInput = new Input<>("weights", "mixture weights that determine contribution of each mixture component. "
 			+ "Equal weights if not specified.");
-	final public Input<RealVectorParam<? extends PositiveReal>> rateVectorInput = new Input<>("rates", "mixture rates that specify rate of each mixture component. "
+	final public Input<RealVector<? extends PositiveReal>> rateVectorInput = new Input<>("rates", "mixture rates that specify rate of each mixture component. "
 			+ "All rates set to 1.0 if not specified.");
 	final public Input<List<SubstitutionModel>> mixtureComponentInput =
             new Input<>("component", "set of substitution models along branches in the beast.tree", new ArrayList<>(), Validate.REQUIRED);
-    final public Input<RealScalarParam<? extends PositiveReal>> muParameterInput = new Input<>("mutationRate", "mutation rate (defaults to 1.0)");
+    final public Input<RealScalar<? extends PositiveReal>> muParameterInput = new Input<>("mutationRate", "mutation rate (defaults to 1.0)");
 
-	protected RealVectorParam<? extends NonNegativeReal> weightVector;
-	protected RealVectorParam<? extends PositiveReal> rateVector;
-	protected RealScalarParam<? extends PositiveReal> muParameter;
+	protected RealVector<? extends NonNegativeReal> weightVector;
+	protected RealVector<? extends PositiveReal> rateVector;
+	protected RealScalar<? extends PositiveReal> muParameter;
 	protected List<SubstitutionModel> mixtureComponent;
 	
 	public MixtureSiteModel() {
@@ -130,7 +132,11 @@ public class MixtureSiteModel extends SiteModelInterface.Base {
 
 	@Override
 	public double[] getCategoryRates(Node node) {
-		return rateVector.getValues();
+		double[] values = new double[rateVector.size()];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = rateVector.get(i);
+		}
+		return values;
 	}
 
 	@Override
@@ -140,7 +146,11 @@ public class MixtureSiteModel extends SiteModelInterface.Base {
 
 	@Override
 	public double[] getCategoryProportions(Node node) {
-		return weightVector.getValues();
+		double[] values = new double[weightVector.size()];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = weightVector.get(i);
+		}
+		return values;
 	}
 
 	@Override	

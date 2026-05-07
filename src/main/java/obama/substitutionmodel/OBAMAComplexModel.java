@@ -14,9 +14,11 @@ import beast.base.evolution.datatype.DataType;
 import beast.base.spec.evolution.substitutionmodel.ComplexSubstitutionModel;
 import beast.base.spec.evolution.substitutionmodel.EmpiricalSubstitutionModel;
 import beast.base.evolution.tree.Node;
+import beast.base.inference.util.InputUtil;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.inference.parameter.BoolScalarParam;
-import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.BoolScalar;
+import beast.base.spec.type.IntScalar;
 @Description("Complex substitution model that can average over a number of amino acid substitution models " +
 		"as well as switch between the model's frequencies and external frequencies (as for example " +
 		"empirical frequencies informed by an alignment).")
@@ -24,13 +26,13 @@ import beast.base.spec.inference.parameter.IntScalarParam;
 		year = 2020, firstAuthorSurname = "bouckaert", DOI="doi.org/10.7717/peerj.9460")
 public class OBAMAComplexModel extends ComplexSubstitutionModel {
 	
-	final public Input<BoolScalarParam> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
+	final public Input<BoolScalar> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
 			+ "otherwise use frequencies from frequencies input (e.g. empirical frequencies)", new BoolScalarParam(false));
 	final public Input<List<EmpiricalSubstitutionModel>> substModelInput = new Input<>("model", "empicial amino acid substitution model", new ArrayList<>(), Validate.REQUIRED);
-	final public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
+	final public Input<IntScalar<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
 
-	BoolScalarParam useExternalFreqs;
-	IntScalarParam<? extends NonNegativeInt> modelIndicator;
+	BoolScalar useExternalFreqs;
+	IntScalar<? extends NonNegativeInt> modelIndicator;
 	List<EmpiricalSubstitutionModel> models;
 	
 	public OBAMAComplexModel() {
@@ -118,11 +120,11 @@ public class OBAMAComplexModel extends ComplexSubstitutionModel {
 	
 	@Override
 	protected boolean requiresRecalculation() {
-		if (useExternalFreqs.isDirtyCalculation()) {
+		if (InputUtil.isDirty(useExternalFreqsInput)) {
 			updateMatrix = true;
 			return true;
 		}
-		if (modelIndicator.isDirtyCalculation()) {
+		if (InputUtil.isDirty(modelIndicatorInput)) {
 			updateMatrix = true;
 			return true;
 		}

@@ -19,8 +19,9 @@ import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.util.InputUtil;
 import beast.base.spec.domain.NonNegativeInt;
-import beast.base.spec.inference.parameter.IntVectorParam;
+import beast.base.spec.type.IntVector;
 import beast.base.core.Log;
 import beast.base.core.ProgramStatus;
 import beast.base.evolution.alignment.Alignment;
@@ -40,7 +41,7 @@ public class PhyloHMM extends Distribution {
 			+ "", hmmAlgorithm.Viterbi, hmmAlgorithm.values());
 	
 	final public Input<String> stateLabelsInput = new Input<>("stateLabels", "comma separated list of labels for each of the states in the HMM");
-	final public Input<IntVectorParam<? extends NonNegativeInt>> stateToOutputMapInput = new Input<>("stateToOutputMap", "map that links HMM states with an output. "
+	final public Input<IntVector<? extends NonNegativeInt>> stateToOutputMapInput = new Input<>("stateToOutputMap", "map that links HMM states with an output. "
 			+ "If not specified, each state is assumed to have a unique output.");
 	
 	// threading
@@ -75,7 +76,7 @@ public class PhyloHMM extends Distribution {
     int nrOfThreads;
     ExecutorService exec;
     
-    IntVectorParam<? extends NonNegativeInt> stateToOutputMap;
+    IntVector<? extends NonNegativeInt> stateToOutputMap;
     int [] map;
 
 	@Override
@@ -485,7 +486,7 @@ public class PhyloHMM extends Distribution {
 
 	@Override
 	protected boolean requiresRecalculation() {
-		if (stateToOutputMap != null && stateToOutputMap.somethingIsDirty()) {
+		if (stateToOutputMap != null && InputUtil.isDirty(stateToOutputMapInput)) {
 			// assume number of states does not change!
 			for (int i = 0; i < HMMStateCount; i++) {
 				map[i] = stateToOutputMap.get(i);

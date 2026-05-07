@@ -22,11 +22,11 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <![CDATA[
 
         <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
-        <parameter id="OBAMA_gammaShape.s:$(n)" lower="0.1" name="stateNode">1.0</parameter>
-        <parameter id="OBAMA_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="OBAMA_gammaShape.s:$(n)" spec="RealScalarParam" domain="PositiveReal">1.0</stateNode>
+        <stateNode id="OBAMA_ProportionInvariable.s:$(n)" spec="RealScalarParam" domain="UnitInterval">0.1</stateNode>
         <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
         <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>  
-        <parameter id="OBAMA_frequencies.s:$(n)" lower="0.0" upper="1.0" name="stateNode" dimension="20">0.05</parameter>
+        <stateNode id="OBAMA_frequencies.s:$(n)" spec="SimplexParam">0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05</stateNode>
 
         <!-- frequencies estimation -->
         <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
@@ -44,12 +44,9 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 
     	<prior id='OBAMA_MutationRatePrior.s:$(n)' x='@OBAMA_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
             
-        <prior id="OBAMA_freqsPrior.s:$(n)" name="distribution" x="@OBAMA_frequencies.s:$(n)">
-            <distr id="OBMAMA_Dirichlet" spec="beast.base.inference.distribution.Dirichlet">
-                <parameter id="RealParameter" spec="parameter.RealParameter" dimension="20" lower="0.0" name="alpha" upper="0.0">4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0
-                </parameter>
-            </distr>
-        </prior>
+        <distribution id="OBAMA_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@OBAMA_frequencies.s:$(n)">
+            <alpha spec="RealVectorParam" domain="PositiveReal" dimension="20">4.0</alpha>
+        </distribution>
 
 	    <siteModel id="OBAMA.s:$(n)" spec="obama.sitemodel.OBAMAModelTestSiteModel" 
 		    gammaCategoryCount="4" proportionInvariant="@OBAMA_ProportionInvariable.s:$(n)" shape="@OBAMA_gammaShape.s:$(n)"
@@ -173,11 +170,11 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <![CDATA[
 
         <stateNode id="OBAMA_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
-        <parameter id="OBAMA_gammaShape.s:$(n)" lower="0.1" name="stateNode">1.0</parameter>
-        <parameter id="OBAMA_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="OBAMA_gammaShape.s:$(n)" spec="RealScalarParam" domain="PositiveReal">1.0</stateNode>
+        <stateNode id="OBAMA_ProportionInvariable.s:$(n)" spec="RealScalarParam" domain="UnitInterval">0.1</stateNode>
         <stateNode id="OBAMA_hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
         <stateNode id="OBAMA_hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>  
-        <parameter id="frequencies_OBAMA.s:$(n)" lower="0.0" upper="1.0" name="stateNode" dimension="20">0.05</parameter>
+        <stateNode id="frequencies_OBAMA.s:$(n)" spec="SimplexParam">0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05</stateNode>
 
         <!-- frequencies estimation -->
         <stateNode id="OBAMA_useExternalFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
@@ -195,17 +192,14 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 
         <prior id='OBAMA_MutationRatePrior.s:$(n)' x='@OBAMA_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
             
-        <prior id="OBAMA_freqsPrior.s:$(n)" name="distribution" x="@frequencies_OBAMA.s:$(n)">
-            <distr id="OBMAMA_Dirichlet" spec="beast.base.inference.distribution.Dirichlet">
-                <parameter id="RealParameter" spec="parameter.RealParameter" dimension="20" lower="0.0" name="alpha" upper="0.0">4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0
-                </parameter>
-            </distr>
-        </prior>
+        <distribution id="OBAMA_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@frequencies_OBAMA.s:$(n)">
+            <alpha spec="RealVectorParam" domain="PositiveReal" dimension="20">4.0</alpha>
+        </distribution>
 
         <siteModel id="OBAMA.s:$(n)" spec="obama.sitemodel.OBAMAModelTestSiteModel" 
             gammaCategoryCount="4" proportionInvariant="@OBAMA_ProportionInvariable.s:$(n)" shape="@OBAMA_gammaShape.s:$(n)"
             hasGammaRates="@OBAMA_hasGammaRates.s:$(n)" hasInvariantSites="@OBAMA_hasInvariableSites.s:$(n)">
-            <parameter id="OBAMA_mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>
+            <mutationRate id="OBAMA_mutationRate.s:$(n)" spec="RealScalarParam" domain="PositiveReal" estimate="false">1.0</mutationRate>
                 <substModel id="OBAMA_substmodel.s:$(n)" spec="obama.substitutionmodel.OBAMAModel">
                         <frequencies id="OBAMA_freqs.s:$(n)" spec="Frequencies" frequencies="@frequencies_OBAMA.s:$(n)"/>
                         <useExternalFreqs idref="OBAMA_useExternalFreqs.s:$(n)"/>

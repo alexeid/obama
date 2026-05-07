@@ -8,43 +8,46 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.inference.util.InputUtil;
 import beast.base.spec.domain.NonNegativeInt;
-import beast.base.spec.inference.parameter.IntScalarParam;
-import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.evolution.sitemodel.SiteModel;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.IntScalar;
 import beast.base.evolution.tree.Node;
 
 @Description("Site model that jumps between with and without gamma sites, as well as with and without invariant sites")
 @Citation(value="Remco Bouckaert. OBAMA: OBAMA for Bayesian amino-acid model averaging. Peerj. 2020.", year=2020, DOI="https://doi.org/10.7717/peerj.44129")
 public class OBAMAModelTestSiteModel extends SiteModel {
 
-	public Input<IntScalarParam<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
-	public Input<IntScalarParam<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
 
-	IntScalarParam<? extends NonNegativeInt> hasInvariantSites;
-	IntScalarParam<? extends NonNegativeInt> hasGammaRates;
-	
+	IntScalar<? extends NonNegativeInt> hasInvariantSites;
+	IntScalar<? extends NonNegativeInt> hasGammaRates;
+
 	@Override
 	public void initAndValidate() {
-		//BooleanParameter dummy = new BooleanParameter("1");
 		hasInvariantSites = hasInvariantSitesInput.get();
-		//hasInvariantSites.assignFromWithoutID(dummy);
 		hasGammaRates = hasGammaRatesInput.get();
-		//hasGammaRates.assignFromWithoutID(dummy);
-		super.initAndValidate();
-		
-		// ensure categoryCount = gammaCategories + 1 by checking shape and invar parameters are present
+
+		// validate before super.initAndValidate() because the parent's refresh() invokes
+		// calculateCategoryRates() which dereferences shape/invar parameters
 		if (shapeParameterInput.get() == null) {
 			throw new IllegalArgumentException("shape parameter must be specified");
 		}
-		if (shapeParameterInput.get().isEstimatedInput.get() == false) {
-			throw new IllegalArgumentException("shape parameter must be estimated");
+		if (!(shapeParameterInput.get() instanceof RealScalarParam<PositiveReal> shape) || !shape.isEstimatedInput.get()) {
+			throw new IllegalArgumentException("shape parameter must be a RealScalarParam with estimate=true");
 		}
 		if (invarParameterInput.get() == null) {
 			throw new IllegalArgumentException("proportionInvariant parameter must be specified");
 		}
-		if (invarParameterInput.get().isEstimatedInput.get() == false) {
-			throw new IllegalArgumentException("proportionInvariant parameter must be estimated");
+		if (!(invarParameterInput.get() instanceof RealScalarParam<UnitInterval> invar) || !invar.isEstimatedInput.get()) {
+			throw new IllegalArgumentException("proportionInvariant parameter must be a RealScalarParam with estimate=true");
 		}
+
+		super.initAndValidate();
 	}
 
 	@Override
@@ -55,12 +58,12 @@ public class OBAMAModelTestSiteModel extends SiteModel {
 		double propVariable = 1.0;
         int cat = 0;
 
-        if (/*invarParameter != null && */hasInvariantSites.get() > 0) {
+        if (hasInvariantSites.get() > 0) {
             if (hasPropInvariantCategory) {
                 categoryRates[0] = 0.0;
-                categoryProportions[0] = invarParameter.getValue();
+                categoryProportions[0] = invarParameter.get();
             }
-            propVariable = 1.0 - invarParameter.getValue();
+            propVariable = 1.0 - invarParameter.get();
             if (hasPropInvariantCategory) {
                 cat = 1;
             }
@@ -73,15 +76,13 @@ public class OBAMAModelTestSiteModel extends SiteModel {
 
         if (hasGammaRates.get() > 0) {
 
-            final double a = shapeParameter.getValue();
+            final double a = shapeParameter.get();
             double mean = 0.0;
             final int gammaCatCount = categoryCount - cat;
 
             final GammaDistribution g = GammaDistribution.of(a, 1.0 / a);
             for (int i = 0; i < gammaCatCount; i++) {
                 try {
-                    // RRB: alternative implementation that seems equally good in
-                    // the first 5 significant digits, but uses a standard distribution object
                 	if (useBeast1StyleGamma) {
                         categoryRates[i + cat] = GammaDistributionQuantile((2.0 * i + 1.0) / (2.0 * gammaCatCount), a, 1.0 / a);
                 	} else {
@@ -108,51 +109,30 @@ public class OBAMAModelTestSiteModel extends SiteModel {
             categoryProportions[cat] = propVariable;
         }
 
-        // debugging code
-//        double sum = 0;
-//        for (double r : categoryProportions) {
-//        	sum +=r;
-//        }
-//        if (!hasPropInvariantCategory) {
-//        	sum += getProportionInvariant();
-//        }
-//        if (Math.abs(sum - 1.0) > 1e-10) {
-//        	calculateCategoryRates(node);
-//        	throw new RuntimeException("Incorrect proportions " + sum + " " + Arrays.toString(categoryProportions));
-//        }
-//        double meanrate = 0;
-//        for (int i = 0; i < categoryProportions.length; i++) {
-//        	meanrate += categoryProportions[i] * categoryRates[i];
-//        }
-//        if (Math.abs(meanrate - 1.0) > 1e-10) {
-//        	throw new RuntimeException("Incorrect mean rate");
-//        }
-
         ratesKnown = true;
     }
 
-	
+
 	@Override
 	protected boolean requiresRecalculation() {
 		boolean isDirty = false;
-		if (hasInvariantSites.somethingIsDirty() || hasGammaRates.somethingIsDirty()) {
+		if (InputUtil.isDirty(hasInvariantSitesInput) || InputUtil.isDirty(hasGammaRatesInput)) {
 			isDirty = true;
             ratesKnown = false;
 		}
-		
 		if (super.requiresRecalculation()) {
 			isDirty = true;
 		}
 		return isDirty;
 	}
-	
+
 	@Override
     public double getProportionInvariant() {
         if (hasInvariantSites.get() > 0) {
-        	return invarParameter.getValue();
+        	return invarParameter.get();
         } else {
         	return 0.0;
         }
     }
-	
+
 }

@@ -1,6 +1,6 @@
 # OBAMA for Bayesian Aminoacid Model Averaging
 
-A [BEAST2](http://beast2.org) package for amino acid/protein site model averaging
+A [BEAST 3](https://github.com/CompEvol/beast3) package for amino acid/protein site model averaging.
 
 Data files for the experiments in the manuscripts can be found [here](https://github.com/rbouckaert/obama/releases/tag/data)
 

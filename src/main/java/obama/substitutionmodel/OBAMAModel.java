@@ -9,9 +9,11 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.inference.util.InputUtil;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.inference.parameter.BoolScalarParam;
-import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.BoolScalar;
+import beast.base.spec.type.IntScalar;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.tree.Node;
@@ -24,13 +26,13 @@ import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 @Citation(value="Remco Bouckaert. OBAMA: OBAMA for Bayesian amino-acid model averaging. PeerJ 8, e9460",
 		year = 2020, firstAuthorSurname = "bouckaert", DOI="doi.org/10.7717/peerj.9460")
 public class OBAMAModel extends GeneralSubstitutionModel {
-	final public Input<BoolScalarParam> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
+	final public Input<BoolScalar> useExternalFreqsInput = new Input<>("useExternalFreqs", "if false, use substitution model frequencies, "
 			+ "otherwise use frequencies from frequencies input (e.g. empirical frequencies)", new BoolScalarParam(false));
 	final public Input<List<EmpiricalSubstitutionModel>> substModelInput = new Input<>("model", "empicial amino acid substitution model", new ArrayList<>(), Validate.REQUIRED);
-	final public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
+	final public Input<IntScalar<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "index of the model in list of models that is used for its rates and frequencies", Validate.REQUIRED);
 
-	BoolScalarParam useExternalFreqs;
-	IntScalarParam<? extends NonNegativeInt> modelIndicator;
+	BoolScalar useExternalFreqs;
+	IntScalar<? extends NonNegativeInt> modelIndicator;
 	List<EmpiricalSubstitutionModel> models;
 	
 	public OBAMAModel() {
@@ -119,11 +121,11 @@ public class OBAMAModel extends GeneralSubstitutionModel {
 	
 	@Override
 	protected boolean requiresRecalculation() {
-		if (useExternalFreqs.isDirtyCalculation()) {
+		if (InputUtil.isDirty(useExternalFreqsInput)) {
 			updateMatrix = true;
 			return true;
 		}
-		if (modelIndicator.isDirtyCalculation()) {
+		if (InputUtil.isDirty(modelIndicatorInput)) {
 			updateMatrix = true;
 			return true;
 		}

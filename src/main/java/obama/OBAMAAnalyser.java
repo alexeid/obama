@@ -49,7 +49,7 @@ public class OBAMAAnalyser extends Runnable {
 				List<EmpiricalSubstitutionModel> models = bamaModel.substModelInput.get();
 				int [] modelCount = new int[models.size()];
 				
-				String logEntry = bamaModel.modelIndicatorInput.get().getID();
+				String logEntry = ((BEASTInterface) bamaModel.modelIndicatorInput.get()).getID();
 				if (!trace.getLabels().contains(logEntry) && logEntry.indexOf('.') > 0) {
 					logEntry = logEntry.substring(0, logEntry.indexOf('.'));
 				}
@@ -75,7 +75,7 @@ public class OBAMAAnalyser extends Runnable {
 				}
 
 				// calc proportion of useExternalFreqs
-				logEntry = bamaModel.useExternalFreqsInput.get().getID();
+				logEntry = ((BEASTInterface) bamaModel.useExternalFreqsInput.get()).getID();
 				if (!trace.getLabels().contains(logEntry) && logEntry.indexOf('.') > 0) {
 					logEntry = logEntry.substring(0, logEntry.indexOf('.'));
 				}

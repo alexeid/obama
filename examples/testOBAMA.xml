@@ -46,8 +46,8 @@ name="alignment">
         </tree>
         <parameter id="birthRate.t:protein" name="stateNode">1.0</parameter>
         <stateNode id="OBAMA_ModelIndicator.s:protein" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
-        <parameter id="OBAMA_gammaShape.s:protein" name="stateNode">1.0</parameter>
-        <parameter id="OBAMA_ProportionInvariable.s:protein" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="OBAMA_gammaShape.s:protein" spec="RealScalarParam" domain="PositiveReal">1.0</stateNode>
+        <stateNode id="OBAMA_ProportionInvariable.s:protein" spec="RealScalarParam" domain="UnitInterval">0.1</stateNode>
         <stateNode id="OBAMA_hasInvariableSites.s:protein" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
         <stateNode id="OBAMA_hasGammaRates.s:protein" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
         <stateNode id="OBAMA_useExternalFreqs.s:protein" spec="BoolScalarParam">false</stateNode>
@@ -80,7 +80,7 @@ name="alignment">
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution" useThreads="true">
             <distribution id="treeLikelihood.protein" spec="ThreadedTreeLikelihood" data="@protein" tree="@Tree.t:protein">
                 <siteModel id="OBAMA.s:protein" spec="obama.sitemodel.OBAMAModelTestSiteModel" gammaCategoryCount="4" hasGammaRates="@OBAMA_hasGammaRates.s:protein" hasInvariantSites="@OBAMA_hasInvariableSites.s:protein" proportionInvariant="@OBAMA_ProportionInvariable.s:protein" shape="@OBAMA_gammaShape.s:protein">
-                    <parameter id="OBAMA_mutationRate.s:protein" estimate="false" name="mutationRate">1.0</parameter>
+                    <mutationRate id="OBAMA_mutationRate.s:protein" spec="RealScalarParam" domain="PositiveReal" estimate="false">1.0</mutationRate>
                     <substModel id="OBAMA_substmodel.s:protein" spec="obama.substitutionmodel.OBAMAModel" modelIndicator="@OBAMA_ModelIndicator.s:protein" useExternalFreqs="@OBAMA_useExternalFreqs.s:protein">
                         <model id="OBAMA_Blosum62.0" spec="obama.substitutionmodel.OBAMA_Blosum62"/>
                         <model id="OBAMA_CpREV.0" spec="obama.substitutionmodel.OBAMA_CpREV"/>
@@ -97,7 +97,7 @@ name="alignment">
                         <model id="OBAMA_RtREV.0" spec="obama.substitutionmodel.OBAMA_RtREV"/>
                         <model id="OBAMA_VT.0" spec="obama.substitutionmodel.OBAMA_VT"/>
                         <model id="OBAMA_WAG.0" spec="obama.substitutionmodel.OBAMA_WAG"/>
-                        <frequencies id="OBAMA_empiricalFreqs.s:protein" spec="Frequencies" data="@protein"/>
+                        <frequencies id="OBAMA_empiricalFreqs.s:protein" spec="beast.base.spec.evolution.substitutionmodel.Frequencies" data="@protein"/>
                     </substModel>
                 </siteModel>
                 <branchRateModel id="StrictClock.c:protein" spec="beast.base.evolution.branchratemodel.StrictClockModel">
@@ -133,14 +133,18 @@ name="alignment">
 
     <operator id="OBAMA_FreqsFlipOperator.s:protein" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:protein" weight="0.1"/>
 
-    <operator id="OBAMA_ModelIndicatorUniformOperator.s:protein" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:protein" weight="3.0"/>
+    <!-- TODO: model-indicator sampling needs a bounded-int operator. The legacy
+         UniformOperator used IntegerParameter's per-instance upper bound; spec
+         IntScalarParam has no per-instance upper, only domain (NonNegativeInt).
+         IntUniformOperator overflows because NonNegativeInt has upper=MAX_VALUE.
+         Reintroduce once a BoundedInt domain or per-instance upper exists. -->
 
     <logger id="tracelog" fileName="protein.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
         <log idref="treeLikelihood.protein"/>
-        <log id="TreeHeight.t:protein" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:protein"/>
+        <log id="TreeHeight.t:protein" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:protein"/>
         <log idref="YuleModel.t:protein"/>
         <log idref="birthRate.t:protein"/>
         <log idref="OBAMA_ModelIndicator.s:protein"/>
