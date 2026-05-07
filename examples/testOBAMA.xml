@@ -76,6 +76,10 @@ name="alignment">
                     <parameter id="RealParameter.2" lower="0.0" name="beta" upper="0.0">4.0</parameter>
                 </Beta>
             </distribution>
+            <distribution id="OBAMA_ModelIndicatorPrior.s:protein" spec="beast.base.spec.inference.distribution.IntUniform" param="@OBAMA_ModelIndicator.s:protein">
+                <lower spec="IntScalarParam" domain="Int" estimate="false">0</lower>
+                <upper spec="IntScalarParam" domain="Int" estimate="false">14</upper>
+            </distribution>
         </distribution>
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution" useThreads="true">
             <distribution id="treeLikelihood.protein" spec="ThreadedTreeLikelihood" data="@protein" tree="@Tree.t:protein">
@@ -133,11 +137,7 @@ name="alignment">
 
     <operator id="OBAMA_FreqsFlipOperator.s:protein" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:protein" weight="0.1"/>
 
-    <!-- TODO: model-indicator sampling needs a bounded-int operator. The legacy
-         UniformOperator used IntegerParameter's per-instance upper bound; spec
-         IntScalarParam has no per-instance upper, only domain (NonNegativeInt).
-         IntUniformOperator overflows because NonNegativeInt has upper=MAX_VALUE.
-         Reintroduce once a BoundedInt domain or per-instance upper exists. -->
+    <operator id="OBAMA_ModelIndicatorUniformOperator.s:protein" spec="beast.base.spec.inference.operator.uniform.IntUniformOperator" parameter="@OBAMA_ModelIndicator.s:protein" weight="3.0"/>
 
     <logger id="tracelog" fileName="protein.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>

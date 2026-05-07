@@ -43,7 +43,12 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
     	</distribution>
 
     	<prior id='OBAMA_MutationRatePrior.s:$(n)' x='@OBAMA_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
-            
+
+        <distribution id="OBAMA_ModelIndicatorPrior.s:$(n)" spec="beast.base.spec.inference.distribution.IntUniform" param="@OBAMA_ModelIndicator.s:$(n)">
+            <lower spec="IntScalarParam" domain="Int" estimate="false">0</lower>
+            <upper spec="IntScalarParam" domain="Int" estimate="false">14</upper>
+        </distribution>
+
         <distribution id="OBAMA_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@OBAMA_frequencies.s:$(n)">
             <alpha spec="RealVectorParam" domain="PositiveReal" dimension="20">4.0</alpha>
         </distribution>
@@ -83,7 +88,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 
         <operator id='OBAMA_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.1" weight="0.1" parameter="@OBAMA_mutationRate.s:$(n)"/>
             
-	    <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
+	    <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="beast.base.spec.inference.operator.uniform.IntUniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
     	<operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
 
 
@@ -124,6 +129,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             
             <connect srcID='OBAMA_GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_gammaShape.s:$(n)/estimate=true'>Prior on gamma shape parameter for partition s:$(n)</connect>
             <connect srcID='OBAMA_PropInvariablePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_ProportionInvariable.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
+            <connect srcID='OBAMA_ModelIndicatorPrior.s:$(n)'       targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n))'>Uniform prior on substitution-model indicator for partition s:$(n)</connect>
 
             <connect srcID='OBAMA_gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
             <connect srcID='OBAMA_ProportionInvariableScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_ProportionInvariable.s:$(n)/estimate=true'>Scales proportion invariant of partition s:$(n)</connect>
@@ -191,6 +197,11 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         </distribution>
 
         <prior id='OBAMA_MutationRatePrior.s:$(n)' x='@OBAMA_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
+
+        <distribution id="OBAMA_ModelIndicatorPrior.s:$(n)" spec="beast.base.spec.inference.distribution.IntUniform" param="@OBAMA_ModelIndicator.s:$(n)">
+            <lower spec="IntScalarParam" domain="Int" estimate="false">0</lower>
+            <upper spec="IntScalarParam" domain="Int" estimate="false">14</upper>
+        </distribution>
             
         <distribution id="OBAMA_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@frequencies_OBAMA.s:$(n)">
             <alpha spec="RealVectorParam" domain="PositiveReal" dimension="20">4.0</alpha>
@@ -231,7 +242,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 
         <operator id='OBAMA_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.1" weight="0.05" parameter="@OBAMA_mutationRate.s:$(n)"/>
             
-        <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="UniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
+        <operator id="OBAMA_ModelIndicatorUniformOperator.s:$(n)" spec="beast.base.spec.inference.operator.uniform.IntUniformOperator" parameter="@OBAMA_ModelIndicator.s:$(n)" weight="3.0"/>
         <operator id="OBAMA_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@OBAMA_useExternalFreqs.s:$(n)" weight="0.1"/>
 
 
@@ -272,6 +283,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             
             <connect srcID='OBAMA_GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_gammaShape.s:$(n)/estimate=true'>Prior on gamma shape parameter for partition s:$(n)</connect>
             <connect srcID='OBAMA_PropInvariablePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_ProportionInvariable.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
+            <connect srcID='OBAMA_ModelIndicatorPrior.s:$(n)'       targetID='prior' inputName='distribution' if='inlikelihood(OBAMA.s:$(n))'>Uniform prior on substitution-model indicator for partition s:$(n)</connect>
 
             <connect srcID='OBAMA_gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
             <connect srcID='OBAMA_ProportionInvariableScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(OBAMA.s:$(n)) and OBAMA_ProportionInvariable.s:$(n)/estimate=true'>Scales proportion invariant of partition s:$(n)</connect>
