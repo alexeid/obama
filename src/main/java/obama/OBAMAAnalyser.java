@@ -17,7 +17,7 @@ import beast.base.inference.Runnable;
 import beast.base.core.Log;
 import beast.base.core.Input.Validate;
 import beast.base.inference.MCMC;
-import beast.base.evolution.substitutionmodel.EmpiricalSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.EmpiricalSubstitutionModel;
 import beast.base.parser.XMLParser;
 
 public class OBAMAAnalyser extends Runnable {

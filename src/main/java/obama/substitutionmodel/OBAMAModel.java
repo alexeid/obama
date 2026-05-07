@@ -15,8 +15,8 @@ import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.tree.Node;
-import beast.base.evolution.substitutionmodel.EmpiricalSubstitutionModel;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.EmpiricalSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 @Description("Substitution model that can average over a number of amino acid substitution models " +
 		"as well as switch between the model's frequencies and external frequencies (as for example " +

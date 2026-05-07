@@ -33,7 +33,7 @@ import obama.substitutionmodel.OBAMA_VT;
 import obama.substitutionmodel.OBAMA_WAG;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Input;
-import beast.base.evolution.substitutionmodel.EmpiricalSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.EmpiricalSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 public class OBAMAModelTestInputEditor extends SiteModelInputEditor {

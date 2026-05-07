@@ -8,13 +8,13 @@ import java.util.List;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.SimplexParam;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.Frequencies;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 @Description("Substitution model for amino acid based on nucleotide models for individual codon positions")
 public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
@@ -74,15 +74,13 @@ public class ParameterisedAminoAcidModel extends GeneralSubstitutionModel {
         if (frequenciesInput.get() != null) {
         	frequencies = frequenciesInput.get();
         } else {
-        	
-        	
-	        String valuesString = "";
+	        double[] uniform = new double[nrOfStates];
 	        for (int i = 0; i < nrOfStates; i++) {
-	            valuesString += (1.0/nrOfStates) + " ";
+	            uniform[i] = 1.0 / nrOfStates;
 	        }
-	        RealParameter freqsRParam = new RealParameter(valuesString);
+	        SimplexParam freqsParam = new SimplexParam(uniform);
 	        frequencies = new Frequencies();
-	        frequencies.initByName("frequencies", freqsRParam);
+	        frequencies.initByName("frequencies", freqsParam);
         }
     }
 

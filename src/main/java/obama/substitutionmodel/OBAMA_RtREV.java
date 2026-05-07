@@ -3,7 +3,7 @@ package obama.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.evolution.datatype.Aminoacid;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.EmpiricalSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.EmpiricalSubstitutionModel;
 /** model data from codonPHYML, which is based on PHYML **/
 
 @Description("RtREV substitution model for amino acids")
